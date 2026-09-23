@@ -1,1 +1,56 @@
-
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lab-page
+  namespace: lab
+data:
+  index.html: |
+    <h1>EKS GitOps Lab</h1>
+    <p>Version 1: deployed from GitHub by Argo CD.</p>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-web
+  namespace: lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lab-web
+  template:
+    metadata:
+      labels:
+        app: lab-web
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:stable-alpine
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
+          volumeMounts:
+            - name: page
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: page
+          configMap:
+            name: lab-page
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lab-web
+  namespace: lab
+spec:
+  selector:
+    app: lab-web
+  ports:
+    - port: 80
+      targetPort: 80
