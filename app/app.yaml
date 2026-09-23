@@ -6,7 +6,7 @@ metadata:
 data:
   index.html: |
     <h1>EKS GitOps Lab</h1>
-    <p>Version 2: updated automatically from GitHub.</p>
+    <p>Version 3: updated automatically from GitHub.</p>
 ---
 apiVersion: apps/v1
 kind: Deployment
